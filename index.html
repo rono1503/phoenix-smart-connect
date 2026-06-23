@@ -688,7 +688,7 @@
 </footer>
 
 <script>
-const API_URL = 'https://bizhubgy-backend.railway.app';
+const API_URL = 'https://leadgate-backend-production-f48f.up.railway.app';
 
 async function submitLead() {
   const name = document.getElementById('leadName').value.trim();
@@ -712,7 +712,7 @@ async function submitLead() {
   btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px">hourglass_top</span> Sending...';
 
   try {
-    const res = await fetch(API_URL + '/api/partner-leads', {
+    const res = await fetch(API_URL + '/api/leads', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
