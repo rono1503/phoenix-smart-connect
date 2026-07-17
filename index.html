@@ -704,6 +704,33 @@
 <script>
 const API_URL = 'https://leadgate-backend-production-f48f.up.railway.app';
 
+// --- Ad-click + UTM attribution ---------------------------------------------
+// Capture Google Ads click ids and UTM params from the landing URL as soon as
+// the page loads, and persist them for the session so they survive navigation
+// and are still available when the form is submitted.
+const ATTR_KEYS = ['gclid', 'gbraid', 'wbraid', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content'];
+
+(function captureAttribution() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    ATTR_KEYS.forEach(function (k) {
+      const v = params.get(k);
+      if (v) { try { sessionStorage.setItem('lg_' + k, v); } catch (e) {} }
+    });
+  } catch (e) {}
+})();
+
+function getAttribution() {
+  const out = {};
+  ATTR_KEYS.forEach(function (k) {
+    let v = null;
+    try { v = sessionStorage.getItem('lg_' + k); } catch (e) {}
+    if (!v) { try { v = new URLSearchParams(window.location.search).get(k); } catch (e) {} }
+    if (v) out[k] = v;
+  });
+  return out;
+}
+
 async function submitLead() {
   const name = document.getElementById('leadName').value.trim();
   const phone = document.getElementById('leadPhone').value.trim();
@@ -740,7 +767,9 @@ async function submitLead() {
         service_type: service || undefined,
         description: [property ? 'Property: ' + property : '', description].filter(Boolean).join(' · '),
         source: 'web-form',
-        source_url: window.location.href,
+        page_url: window.location.href,
+        referrer: document.referrer || undefined,
+        ...getAttribution(),
       }),
     });
 
