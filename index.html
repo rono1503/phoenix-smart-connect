@@ -3,6 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Google tag (gtag.js) — Google Ads -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=AW-18233392630"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'AW-18233392630');
+  </script>
   <title>Phoenix Smart Connect — Security Cameras & Smart Home | East Orange, NJ</title>
   <meta name="description" content="East Orange's trusted security camera installation. Free estimates, same-day service, local techs. CCTV, smart doorbells, intercoms, and home automation.">
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>">
@@ -778,9 +786,13 @@ async function submitLead() {
     document.getElementById('formContent').style.display = 'none';
     document.getElementById('formSuccess').style.display = 'block';
 
-    // Track conversion for ad platforms
-    if (typeof gtag !== 'undefined') {
-      gtag('event', 'conversion', { send_to: 'AW-CONVERSION_ID/form_submit' });
+    // Google Ads conversion — fires only on a successful lead submit
+    if (typeof gtag === 'function') {
+      gtag('event', 'conversion', {
+        send_to: 'AW-18233392630/M_78CPK8-dMcEPb7rfZD',
+        value: 1.0,
+        currency: 'USD'
+      });
     }
   } catch (err) {
     errorEl.textContent = 'Something went wrong. Please call (607) 360-5623 directly.';
