@@ -739,6 +739,16 @@ function getAttribution() {
   return out;
 }
 
+// Normalize a phone number to E.164 for enhanced conversions (US default).
+function toE164(raw) {
+  var s = (raw || '').trim();
+  if (s.charAt(0) === '+') return '+' + s.slice(1).replace(/\D/g, '');
+  var d = s.replace(/\D/g, '');
+  if (d.length === 10) return '+1' + d;
+  if (d.length === 11 && d.charAt(0) === '1') return '+' + d;
+  return d ? '+' + d : '';
+}
+
 async function submitLead() {
   const name = document.getElementById('leadName').value.trim();
   const phone = document.getElementById('leadPhone').value.trim();
@@ -788,6 +798,13 @@ async function submitLead() {
 
     // Google Ads conversion — fires only on a successful lead submit
     if (typeof gtag === 'function') {
+      // Enhanced conversions: provide the lead's contact data (gtag hashes it before sending)
+      var userData = {};
+      if (email) userData.email = email.trim().toLowerCase();
+      var phoneE164 = toE164(phone);
+      if (phoneE164) userData.phone_number = phoneE164;
+      if (userData.email || userData.phone_number) gtag('set', 'user_data', userData);
+
       gtag('event', 'conversion', {
         send_to: 'AW-18233392630/M_78CPK8-dMcEPb7rfZD',
         value: 1.0,
