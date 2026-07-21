@@ -447,6 +447,28 @@
       .nav-cta { font-size: 12px; padding: 6px 14px; }
       .quote-form { padding: 20px; }
     }
+
+    /* Sticky mobile CTA bar */
+    .sticky-cta { display: none; }
+    @media (max-width: 640px) {
+      .sticky-cta {
+        display: flex; gap: 8px;
+        position: fixed; left: 0; right: 0; bottom: 0; z-index: 200;
+        padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px));
+        background: rgba(28, 25, 23, 0.96);
+        -webkit-backdrop-filter: blur(8px);
+        backdrop-filter: blur(8px);
+        border-top: 1px solid rgba(255, 255, 255, 0.12);
+      }
+      .sticky-cta a {
+        flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+        padding: 13px 10px; border-radius: 30px; font-weight: 700; font-size: 15px;
+        text-decoration: none;
+      }
+      .sticky-cta .sc-call { background: transparent; color: #fff; border: 1.5px solid rgba(255, 255, 255, 0.4); }
+      .sticky-cta .sc-quote { background: var(--primary); color: #fff; }
+      body { padding-bottom: 76px; }
+    }
   </style>
 </head>
 <body>
@@ -590,9 +612,15 @@
           <label>Email</label>
           <input type="email" id="leadEmail" placeholder="john@email.com">
         </div>
-        <div class="form-group">
-          <label>Property address *</label>
-          <input type="text" id="leadAddress" placeholder="123 Main St, East Orange, NJ" required>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Town / City *</label>
+            <input type="text" id="leadTown" placeholder="East Orange" required>
+          </div>
+          <div class="form-group">
+            <label>Property address</label>
+            <input type="text" id="leadAddress" placeholder="Street address (optional)">
+          </div>
         </div>
         <div class="form-row">
           <div class="form-group">
@@ -709,6 +737,16 @@
   </div>
 </footer>
 
+<!-- Sticky mobile CTA bar -->
+<div class="sticky-cta">
+  <a class="sc-call" href="tel:+16073605623">
+    <span class="material-symbols-outlined" style="font-size:18px;">call</span> Call
+  </a>
+  <a class="sc-quote" href="#quote">
+    <span class="material-symbols-outlined" style="font-size:18px;">edit</span> Free Estimate
+  </a>
+</div>
+
 <script>
 const API_URL = 'https://leadgate-backend-production-f48f.up.railway.app';
 
@@ -753,6 +791,7 @@ async function submitLead() {
   const name = document.getElementById('leadName').value.trim();
   const phone = document.getElementById('leadPhone').value.trim();
   const email = document.getElementById('leadEmail').value.trim();
+  const town = document.getElementById('leadTown').value.trim();
   const address = document.getElementById('leadAddress').value.trim();
   const property = document.getElementById('leadProperty').value;
   const service = document.getElementById('leadService').value;
@@ -761,7 +800,7 @@ async function submitLead() {
   const btn = document.getElementById('submitBtn');
 
   // Validate
-  if (!name || !phone || !address) {
+  if (!name || !phone || !town) {
     errorEl.style.display = 'block';
     return;
   }
@@ -779,9 +818,8 @@ async function submitLead() {
         name,
         phone,
         email: email || undefined,
-        address,
-        city: 'East Orange',
-        state: 'NJ',
+        address: address || undefined,
+        city: town,
         service_type: service || undefined,
         description: [property ? 'Property: ' + property : '', description].filter(Boolean).join(' · '),
         source: 'web-form',
