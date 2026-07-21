@@ -801,6 +801,20 @@ async function submitLead() {
     btn.innerHTML = '<span class="material-symbols-outlined" style="font-size:18px">send</span> Get My Free Estimate';
   }
 }
+
+// Google Ads click-to-call conversion — fire on any tap of a tel: link.
+// Does NOT preventDefault, so the dialer always opens even if the tag fails.
+document.querySelectorAll('a[href^="tel:"]').forEach(function (el) {
+  el.addEventListener('click', function () {
+    if (typeof gtag === 'function') {
+      gtag('event', 'conversion', {
+        send_to: 'AW-18233392630/y7TfCITc5NMcEPb7rfZD',
+        value: 1.0,
+        currency: 'USD'
+      });
+    }
+  });
+});
 </script>
 
 </body>
